@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>LeetCode Mentor</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <div class="container" id="main-content">
+            <nav class="tabs">
+                <button class="tab-button active" data-section="notes">
+                    Notes
+                </button>
+                <button class="tab-button" data-section="insights">
+                    AI Insights
+                </button>
+                <button class="tab-button" data-section="clear-cache">
+                    Clear Cache
+                </button>
+            </nav>
+
+            <section id="notes" class="tab-section active">
+                <h2>📝 Notes</h2>
+                <textarea
+                    id="notes-area"
+                    placeholder="Write your notes here..."
+                ></textarea>
+                <button id="save-notes">Save Notes</button>
+            </section>
+
+            <section id="insights" class="tab-section">
+                <h2>💡 AI Insights</h2>
+                <div class="warning-banner">
+                    ⚠️ Responses may take longer if the server was idle, as it
+                    needs a few seconds to wake up.
+                </div>
+                <div id="insight-cards">
+                    <div class="insight-card">
+                        <h3>What This Problem Teaches</h3>
+                        <p class="content" id="insight-teaches">Loading...</p>
+                    </div>
+                    <div class="insight-card">
+                        <h3>Prerequisites</h3>
+                        <p class="content" id="insight-prerequisites">Loading...</p>
+                    </div>
+                    <div class="insight-card">
+                        <h3>Real-World Use Case</h3>
+                        <p class="content" id="insight-usecase">Loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="clear-cache" class="tab-section">
+                <h2>🗑 Clear Cache</h2>
+                <div class="warning-banner">
+                    ⚠️ This will permanently delete all saved notes and AI insights from local storage.
+                </div>
+                <button id="clear-cache-btn" style="background-color: #e53935">
+                    Clear All Data
+                </button>
+            </section>
+        </div>
+
+        <div
+            class="container"
+            id="not-leetcode"
+            style="display: none; text-align: center"
+        >
+            <p>⚠ This extension only works on a LeetCode problem page.</p>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
