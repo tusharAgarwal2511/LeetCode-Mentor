@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -9,67 +12,80 @@
     <body>
         <div class="container" id="main-content">
             <nav class="tabs">
-                <button class="tab-button active" data-section="notes">
-                    Notes
-                </button>
-                <button class="tab-button" data-section="insights">
-                    AI Insights
-                </button>
-                <button class="tab-button" data-section="clear-cache">
-                    Clear Cache
-                </button>
+                <button class="tab-button active" data-section="notes">Notes</button>
+                <button class="tab-button" data-section="insights">AI Insights</button>
+                <button class="tab-button" data-section="focus-area">Dashboard</button>
             </nav>
 
             <section id="notes" class="tab-section active">
-                <h2>📝 Notes</h2>
-                <textarea
-                    id="notes-area"
-                    placeholder="Write your notes here..."
-                ></textarea>
-                <button id="save-notes">Save Notes</button>
+                <div class="section-content">
+                    <h2>📝 Notes</h2>
+                    <textarea id="notes-area" placeholder="Write your notes here..."></textarea>
+                    <button id="save-notes">Save Notes</button>
+                    <!-- <button id="user-data-btn">User Data</button> -->
+                    <p id="user-data-display"></p>
+                    <button id="clear-cache-btn" style="background-color: #e53935">
+                        Clear All Data
+                    </button>
+                </div>
+                <div class="section-unavailable" style="display: none;">
+                    ⚠ This section cannot be displayed here.
+                </div>
             </section>
 
             <section id="insights" class="tab-section">
-                <h2>💡 AI Insights</h2>
-                <div class="warning-banner">
-                    ⚠️ Responses may take longer if the server was idle, as it
-                    needs a few seconds to wake up.
+                <div class="section-content">
+                    <h2>💡 AI Insights</h2>
+                    <div class="warning-banner">
+                        ⚠️ Responses may take longer if the server was idle, as it
+                        needs a few seconds to wake up.
+                    </div>
+                    <div id="insight-cards">
+                        <div class="insight-card">
+                            <h3>🧩 Pseudocode</h3>
+                            <pre><code id="insight-pseudocode">Loading...</code></pre>
+                        </div>
+                        <div class="insight-card">
+                            <h3>What This Problem Teaches</h3>
+                            <p class="content" id="insight-teaches">Loading...</p>
+                        </div>
+                        <div class="insight-card">
+                            <h3>Prerequisites</h3>
+                            <p class="content" id="insight-prerequisites">Loading...</p>
+                        </div>
+                        <div class="insight-card">
+                            <h3>Real-World Use Case</h3>
+                            <p class="content" id="insight-usecase">Loading...</p>
+                        </div>
+                    </div>
                 </div>
-                <div id="insight-cards">
-                    <div class="insight-card">
-                        <h3>What This Problem Teaches</h3>
-                        <p class="content" id="insight-teaches">Loading...</p>
-                    </div>
-                    <div class="insight-card">
-                        <h3>Prerequisites</h3>
-                        <p class="content" id="insight-prerequisites">Loading...</p>
-                    </div>
-                    <div class="insight-card">
-                        <h3>Real-World Use Case</h3>
-                        <p class="content" id="insight-usecase">Loading...</p>
-                    </div>
+                <div class="section-unavailable" style="display: none;">
+                    ⚠ This section cannot be displayed here.
                 </div>
             </section>
 
-            <section id="clear-cache" class="tab-section">
-                <h2>🗑 Clear Cache</h2>
-                <div class="warning-banner">
-                    ⚠️ This will permanently delete all saved notes and AI insights from local storage.
+            <section id="focus-area" class="tab-section">
+                <div class="section-content">
+                    <h2>📊 Dashboard</h2>
+                    <div id="difficulty-data">
+                        Loading difficulty data...
+                    </div>
+                    <div id="contest-data">
+                        Loading contest data...
+                    </div>
+                    <div id="topic-data">
+                        Loading topic data...
+                    </div>
+
                 </div>
-                <button id="clear-cache-btn" style="background-color: #e53935">
-                    Clear All Data
-                </button>
+                <div class="section-unavailable" style="display: none;">
+                    ⚠ This section cannot be displayed here.
+                </div>
             </section>
         </div>
-
-        <div
-            class="container"
-            id="not-leetcode"
-            style="display: none; text-align: center"
-        >
-            <p>⚠ This extension only works on a LeetCode problem page.</p>
-        </div>
-
         <script src="script.js"></script>
     </body>
 </html>
+
+
+

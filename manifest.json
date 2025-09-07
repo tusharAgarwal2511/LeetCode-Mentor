@@ -1,9 +1,13 @@
 {
     "manifest_version": 3,
     "name": "LeetCode Mentor",
-    "version": "1.0",
-    "description": "Notes and AI insights for LeetCode problems.",
-    "permissions": ["tabs", "activeTab"],
+    "version": "2.0",
+    "description": "Notes, AI insights, and personalized dashboard for LeetCode problems.",
+    "permissions": ["activeTab", "scripting", "storage", "tabs", "cookies"],
+    "host_permissions": [
+        "https://leetcode.com/*",
+        "https://leetcode.com/graphql"
+    ],
     "icons": {
         "16": "images/icon_16.png",
         "32": "images/icon_32.png",
@@ -18,5 +22,11 @@
             "48": "images/icon_48.png",
             "128": "images/icon_128.png"
         }
-    }
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://leetcode.com/problems/*"],
+            "js": ["inject.js"]
+        }
+    ]
 }
