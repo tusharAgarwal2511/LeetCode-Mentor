@@ -372,6 +372,32 @@ button {
 }
 
 
+/* Better horizontal scrollbar for pseudocode */
+.insight-card pre {
+    scrollbar-width: thin;              /* Firefox */
+    scrollbar-color: #555 #1e1e1e;       /* thumb track */
+}
+
+/* Chrome, Edge, Safari */
+.insight-card pre::-webkit-scrollbar {
+    height: 6px;
+}
+
+.insight-card pre::-webkit-scrollbar-track {
+    background: #1e1e1e;
+    border-radius: 10px;
+}
+
+.insight-card pre::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10px;
+}
+
+.insight-card pre::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+
 
 
 

@@ -8,7 +8,7 @@ async function getLoggedInUsername(tabId) {
                     // 1. Match links whose href is like /u/{username}/
                     const link = document.querySelector('a[href^="/u/"]');
                     if (link) {
-                        const href = link.getAttribute("href"); 
+                        const href = link.getAttribute("href");
                         const match = href.match(/\/u\/([^\/]+)\/?/); // capture text between /u/ and end
                         if (match) return match[1];
                     }
@@ -91,8 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Load notes and insights if problem page
         if (isProblemPage) {
-            // const problemSlug = url.split("/problems/")[1].split("/")[0];
-            const problemSlug = url.split("/problems/")[1].split("/")[0];  
+            const problemSlug = url.split("/problems/")[1].split("/")[0];
 
             const cacheKey = `insights_${problemSlug}`;
             const notesKey = `notes_${problemSlug}`;
@@ -100,11 +99,11 @@ document.addEventListener("DOMContentLoaded", () => {
             loadNotes(notesKey);
 
             document.getElementById("save-notes").addEventListener("click", () => {
-                    const content = document.getElementById("notes-area").value;
-                    chrome.storage.local.set({ [notesKey]: content }, () => {
-                        alert("✅ Notes saved!");
-                    });
+                const content = document.getElementById("notes-area").value;
+                chrome.storage.local.set({ [notesKey]: content }, () => {
+                    alert("✅ Notes saved!");
                 });
+            });
         }
 
         // ✅ Call Difficulty Chart immediately if Focus Area tab is visible
@@ -121,11 +120,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // ===================== INSIGHTS =====================
+// async function loadInsights(problemSlug, cacheKey) {
+//     const cached = localStorage.getItem(cacheKey);
+//     if (cached) {
+//         const data = JSON.parse(cached);
+//         if (Date.now() - data.timestamp < 3 * 24 * 60 * 60 * 1000) {
+//             displayInsights(data.insights);
+//             return;
+//         } else {
+//             localStorage.removeItem(cacheKey);
+//         }
+//     }
+
+//     const pseudocode = await fetchInsight(
+//         `pseudo code to solve leetcode problem ${problemSlug} without comments, return only the response and nothing else`
+//     );
+
+//     const teaches = await fetchInsight(
+//         `explain what can I learn from this leetcode problem ${problemSlug} in 1 sentence, only return the response`
+//     );
+//     const prerequisites = await fetchInsight(
+//         `tell me the prerequisites before solving this leetcode problem ${problemSlug} in 1 sentence, only return the response`
+//     );
+//     const usecase = await fetchInsight(
+//         `explain a real world use case for this leetcode problem ${problemSlug} in 1 sentence, only return the response`
+//     );
+
+//     const insights = { pseudocode, teaches, prerequisites, usecase };
+//     localStorage.setItem(cacheKey, JSON.stringify({ insights, timestamp: Date.now() }));
+//     displayInsights(insights);
+// }
+
 async function loadInsights(problemSlug, cacheKey) {
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+
+    // ✅ Check cache first
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
         const data = JSON.parse(cached);
-        if (Date.now() - data.timestamp < 3 * 24 * 60 * 60 * 1000) {
+        if (Date.now() - data.timestamp < ONE_DAY) {
             displayInsights(data.insights);
             return;
         } else {
@@ -133,44 +166,71 @@ async function loadInsights(problemSlug, cacheKey) {
         }
     }
 
-    const pseudocode = await fetchInsight(
-        `pseudo code to solve leetcode problem ${problemSlug} without comments, return only the response and nothing else`
-    );
-
-    const teaches = await fetchInsight(
-        `explain what can I learn from this leetcode problem ${problemSlug} in 1 sentence, only return the response`
-    );
-    const prerequisites = await fetchInsight(
-        `tell me the prerequisites before solving this leetcode problem ${problemSlug} in 1 sentence, only return the response`
-    );
-    const usecase = await fetchInsight(
-        `explain a real world use case for this leetcode problem ${problemSlug} in 1 sentence, only return the response`
-    );
-
-    const insights = { pseudocode, teaches, prerequisites, usecase };
-    localStorage.setItem(cacheKey, JSON.stringify({ insights, timestamp: Date.now() }));
-    displayInsights(insights);
-}
-
-async function fetchInsight(question) {
     try {
-        const res = await fetch("https://gemini-ask-api.onrender.com/ask", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ question }),
-        });
+        // ✅ Fetch from YOUR API
+        // const res = await fetch(`http://localhost:3000/api/insights/${problemSlug}`);
+        const res = await fetch(`https://leetcode-mentor-backend-production.up.railway.app/api/insights/problem/${problemSlug}`);
+        // const res = await fetch(`http://localhost:3000/api/insights/two-sum`);
+
+        if (!res.ok) throw new Error("Insight not found");
+
         const data = await res.json();
-        return data.answer.trim();
+
+        // ✅ Normalize to existing UI structure
+        const insights = {
+            pseudocode: data.pc,
+            teaches: data.concept,
+            prerequisites: data.pre,
+            usecase: data.uc,
+        };
+
+        // ✅ Cache for 1 day
+        localStorage.setItem(
+            cacheKey,
+            JSON.stringify({ insights, timestamp: Date.now() })
+        );
+
+        displayInsights(insights);
     } catch (err) {
-        return "⚠️ Failed to load.";
+        console.error(err);
+        const DEFAULT_TEXT_MESSAGE = "Documentation in progress.\nWill be added soon.";
+
+        const DEFAULT_PSEUDOCODE_MESSAGE = `// Insight not available yet
+        // Documentation in progress
+
+        function solution():
+            // Implementation pending
+            // Will be updated soon`;
+
+        displayInsights({
+            pseudocode: DEFAULT_TEXT_MESSAGE,
+            teaches: DEFAULT_TEXT_MESSAGE,
+            prerequisites: DEFAULT_TEXT_MESSAGE,
+            usecase: DEFAULT_TEXT_MESSAGE,
+        });
     }
 }
+
+
+// async function fetchInsight(question) {
+//     try {
+//         const res = await fetch("https://gemini-ask-api.onrender.com/ask", {
+//             method: "POST",
+//             headers: { "Content-Type": "application/json" },
+//             body: JSON.stringify({ question }),
+//         });
+//         const data = await res.json();
+//         return data.answer.trim();
+//     } catch (err) {
+//         return "⚠️ Failed to load.";
+//     }
+// }
 
 function displayInsights({ pseudocode, teaches, prerequisites, usecase }) {
     if (pseudocode)
         document.getElementById("insight-pseudocode").textContent = pseudocode;
     document.getElementById("insight-teaches").textContent = teaches;
-    document.getElementById("insight-prerequisites").textContent =prerequisites;
+    document.getElementById("insight-prerequisites").textContent = prerequisites;
     document.getElementById("insight-usecase").textContent = usecase;
 }
 
@@ -184,26 +244,55 @@ function loadNotes(notesKey) {
 }
 
 
+// document.getElementById("clear-cache-btn").addEventListener("click", () => {
+//     if (
+//         confirm(
+//             "Are you sure you want to delete All saved notes, AI insights and timers? This cannot be undone."
+//         )
+//     ) {
+//         chrome.storage.local.get(null, (items) => {
+//             const keysToRemove = Object.keys(items).filter(
+//                 (key) =>
+//                     key.startsWith("notes_") ||
+//                     key.startsWith("insights_") ||
+//                     key.startsWith("timer_")
+//             );
+//             chrome.storage.local.remove(keysToRemove, () => {
+//                 alert("✅ All saved data has been cleared.");
+//                 location.reload();
+//             });
+//         });
+//     }
+// });
+
 document.getElementById("clear-cache-btn").addEventListener("click", () => {
     if (
         confirm(
             "Are you sure you want to delete All saved notes, AI insights and timers? This cannot be undone."
         )
     ) {
+        // 1️⃣ Clear chrome.storage.local (notes, timers)
         chrome.storage.local.get(null, (items) => {
             const keysToRemove = Object.keys(items).filter(
                 (key) =>
                     key.startsWith("notes_") ||
-                    key.startsWith("insights_") ||
                     key.startsWith("timer_")
             );
-            chrome.storage.local.remove(keysToRemove, () => {
-                alert("✅ All saved data has been cleared.");
-                location.reload();
-            });
+            chrome.storage.local.remove(keysToRemove);
         });
+
+        // 2️⃣ Clear insights from localStorage
+        Object.keys(localStorage).forEach((key) => {
+            if (key.startsWith("insights_")) {
+                localStorage.removeItem(key);
+            }
+        });
+
+        alert("✅ All saved data has been cleared.");
+        location.reload();
     }
 });
+
 
 async function loadDifficultyChart() {
     const container = document.getElementById("difficulty-data");
@@ -317,8 +406,8 @@ async function loadContestData() {
                 <div class="contest-header">
                     <h3>🏆 Contest Stats</h3>
                     <div class="contest-rating">Rating: ${stats.rating.toFixed(
-                        0
-                    )}</div>
+            0
+        )}</div>
                 </div>
                 <div class="contest-stats">
                     <div class="stat-box">
@@ -442,9 +531,8 @@ function renderTopicCard(title, topics) {
             const percent = ((t.problemsSolved / totalSolved) * 100).toFixed(1);
             return `
             <div class="topic-segment" 
-                 style="width:${percent}%; background-color:${
-                colors[i % colors.length]
-            }" 
+                 style="width:${percent}%; background-color:${colors[i % colors.length]
+                }" 
                  title="${t.tagName}: ${percent}%"></div>`;
         })
         .join("");
@@ -491,4 +579,179 @@ function renderTopicCard(title, topics) {
 
 
 
+
+// temperory
+
+
+async function loadFocusAreaDashboard() {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const username = await getLoggedInUsername(tab.id);
+    if (!username || !neetcodeTopicJson) return;
+
+    // Load difficulty and topic data
+    const difficultyStats = await fetchUserDifficulty(username);
+    const topicStats = await getUserTopicStats(username);
+
+    const weakTopics = generateWeakTopics(topicStats, neetcodeTopicJson.topics, 5);
+    const weakDifficulties = generateWeakDifficulties(difficultyStats, neetcodeTopicJson.difficulty);
+
+    // Default fallback if everything matches
+    if (!weakTopics.length && !weakDifficulties.length) {
+        weakTopics.push("Dynamic Programming");
+        weakDifficulties.push("Hard");
+    }
+
+    displaySuggestions(weakTopics, weakDifficulties);
+}
+
+// -------------------- Difficulty Suggestions --------------------
+function generateWeakDifficulties(userDifficulty, neetcodeDifficulty) {
+    const suggestions = [];
+
+    const totalUser = Object.values(userDifficulty).reduce((a, b) => a + b, 0) || 1;
+    const totalNeet = Object.values(neetcodeDifficulty).reduce((a, b) => a + b, 0) || 1;
+
+    ["Easy", "Medium", "Hard"].forEach((level) => {
+        const userCount = userDifficulty[level] || 0;
+        const neetCount = neetcodeDifficulty[level.toLowerCase()] || 0;
+
+        const userRatio = userCount / totalUser;
+        const neetRatio = neetCount / totalNeet;
+
+        if (userRatio + 1e-6 < neetRatio) suggestions.push(level);
+    });
+
+    return suggestions;
+}
+
+// -------------------- Topic Suggestions --------------------
+function generateWeakTopics(userStats, neetcodeTopics, minNeetCount = 5) {
+    const suggestions = [];
+
+    const totalUserSolved = Object.values(userStats).reduce((a, b) => a + b, 0) || 1;
+    const totalNeetSolved = Object.values(neetcodeTopics).reduce((a, b) => a + b, 0) || 1;
+
+    for (const topic in neetcodeTopics) {
+        const neetCount = neetcodeTopics[topic];
+        if (neetCount < minNeetCount) continue; // ignore very small topics
+
+        const userSolved = userStats[topic] || 0;
+
+        const userRatio = userSolved / totalUserSolved;
+        const neetRatio = neetCount / totalNeetSolved;
+
+        if (userRatio + 1e-6 < neetRatio) {
+            suggestions.push(topic);
+        }
+    }
+
+    return suggestions;
+}
+
+// -------------------- Display --------------------
+function displaySuggestions(topics, difficulties) {
+    const containerId = "suggestions-data";
+    let container = document.getElementById(containerId);
+
+    const focusArea = document.getElementById("focus-area");
+    const sectionContent = focusArea.querySelector(".section-content");
+
+    if (!container) {
+        const ul = document.createElement("ul");
+        ul.id = containerId;
+        ul.style.marginTop = "20px";
+        sectionContent.appendChild(ul);
+        container = ul;
+    }
+
+    let html = "";
+    if (topics.length) html += "<li><b>Focus on Topics:</b> " + topics.join(", ") + "</li>";
+    if (difficulties.length) html += "<li><b>Focus on Difficulty:</b> " + difficulties.join(", ") + "</li>";
+
+    container.innerHTML = html || "<li>All topics and difficulties are on track ✅</li>";
+}
+
+// -------------------- Helpers --------------------
+async function fetchUserDifficulty(username) {
+    try {
+        const res = await fetch("https://leetcode.com/graphql", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                query: `
+                    query getUserProfile($username: String!) {
+                        matchedUser(username: $username) {
+                            submitStats: submitStatsGlobal {
+                                acSubmissionNum {
+                                    difficulty
+                                    count
+                                }
+                            }
+                        }
+                    }
+                `,
+                variables: { username },
+            }),
+        });
+
+        const data = await res.json();
+        const stats = data.data.matchedUser.submitStats.acSubmissionNum;
+        const userDifficulty = {};
+        stats.forEach((d) => (userDifficulty[d.difficulty] = d.count));
+        return userDifficulty;
+    } catch (err) {
+        console.error("Failed to fetch difficulty stats:", err);
+        return { Easy: 0, Medium: 0, Hard: 0 };
+    }
+}
+
+async function getUserTopicStats(username) {
+    try {
+        const res = await fetch("https://leetcode.com/graphql", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                query: `
+                    query getUserTopicStats($username: String!) {
+                        matchedUser(username: $username) {
+                            tagProblemCounts {
+                                advanced { tagName problemsSolved }
+                                intermediate { tagName problemsSolved }
+                                fundamental { tagName problemsSolved }
+                            }
+                        }
+                    }
+                `,
+                variables: { username },
+            }),
+        });
+
+        const data = await res.json();
+        const tags = data.data.matchedUser.tagProblemCounts;
+        const stats = {};
+
+        ["fundamental", "intermediate", "advanced"].forEach((level) => {
+            if (!tags[level]) return;
+            tags[level].forEach((t) => {
+                stats[t.tagName] = t.problemsSolved;
+            });
+        });
+
+        return stats;
+    } catch (err) {
+        console.error("Failed to fetch user topic stats:", err);
+        return {};
+    }
+}
+
+// -------------------- Ensure Dashboard Calls the Function --------------------
+document.addEventListener("DOMContentLoaded", async () => {
+    const focusTab = document.querySelector('.tab-button[data-section="focus-area"]');
+    focusTab.addEventListener("click", loadFocusAreaDashboard);
+
+    // Call immediately if dashboard is active
+    if (focusTab.classList.contains("active")) {
+        await loadFocusAreaDashboard();
+    }
+});
 

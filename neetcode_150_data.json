@@ -1,0 +1,64 @@
+{
+    "difficulty":{
+        "total": 150,
+        "easy": 28,
+        "med": 101,
+        "hard": 21 
+    },
+
+    "topics": {
+        "total": 503,
+        "Array": 79,
+        "Hash Table": 29,
+        "Linked List": 11,
+        "Math": 13,
+        "Recursion": 7,
+        "String": 32,
+        "Sliding Window": 5,
+        "Binary Search": 13,
+        "Divide and Conquer": 9,
+        "Two Pointers": 16,
+        "Dynamic Programming": 35,
+        "Tree": 16,
+        "Depth-First Search": 31,
+        "Breadth-First Search": 26,
+        "Binary Tree": 16,
+        "Greedy": 11,
+        "Matrix": 15,
+        "Sorting": 17,
+        "Backtracking": 12,
+        "Stack": 9,
+        "Heap (Priority Queue)": 15,
+        "Merge Sort": 1,
+        "Monotonic Stack": 4,
+        "Simulation": 2,
+        "String Matching": 1,
+        "Hash Function": 1,
+        "Combinatorics": 1,
+        "Memoization": 3,
+        "Bit Manipulation": 9,
+        "Design": 11,
+        "Counting": 3,
+        "Binary Search Tree": 4,
+        "Union Find": 9,
+        "Graph": 12,
+        "Trie": 4,
+        "Doubly-Linked List": 1,
+        "Minimum Spanning Tree": 1,
+        "Topological Sort": 4,
+        "Quickselect": 3,
+        "Shortest Path": 2,
+        "Prefix Sum": 2,
+        "Queue": 1,
+        "Monotonic Queue": 1,
+        "Data Stream": 2,
+        "Eulerian Circuit": 1,
+        "Bucket Sort": 1,
+        "Line Sweep": 1,
+        "Geometry": 1
+    }
+}
+
+
+
+
