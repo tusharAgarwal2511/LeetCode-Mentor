@@ -372,7 +372,47 @@ button {
 }
 
 
-/* Better horizontal scrollbar for pseudocode */
+/* Weak Topic Suggestions */
+#suggestions-data {
+    margin-top: 14px;
+}
+
+.suggestions-card {
+    background-color: #1e1e1e;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
+
+.suggestions-title {
+    margin: 0 0 10px 0;
+    color: #F4AF3B;
+    font-size: 16px;
+}
+
+.suggestions-all-good {
+    font-size: 13px;
+    color: #4CAF50;
+    margin: 0;
+}
+
+.suggestion-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.suggestion-tag {
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: #e0e0e0;
+}
+
+
 .insight-card pre {
     scrollbar-width: thin;              /* Firefox */
     scrollbar-color: #555 #1e1e1e;       /* thumb track */
@@ -396,14 +436,3 @@ button {
 .insight-card pre::-webkit-scrollbar-thumb:hover {
     background: #777;
 }
-
-
-
-
-
-
-
-
-
-
-

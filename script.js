@@ -1,4 +1,3 @@
-
 async function getLoggedInUsername(tabId) {
     return new Promise((resolve) => {
         chrome.scripting.executeScript(
@@ -83,6 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (tab.dataset.section === "focus-area") {
                     const tabId = tabs[0].id;
                     loadDifficultyChart();
+                    loadWeakTopicSuggestions();
                     loadContestData();
                     loadTopicData();
                 }
@@ -112,6 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (activeTab === "focus-area") {
             const tabId = tabs[0].id;
             loadDifficultyChart();
+            loadWeakTopicSuggestions();
             loadContestData();
             loadTopicData();
         }
@@ -268,7 +269,7 @@ function loadNotes(notesKey) {
 document.getElementById("clear-cache-btn").addEventListener("click", () => {
     if (
         confirm(
-            "Are you sure you want to delete All saved notes, AI insights and timers? This cannot be undone."
+            "Are you sure you want to delete All saved notes and timers? This cannot be undone."
         )
     ) {
         // 1️⃣ Clear chrome.storage.local (notes, timers)
@@ -292,6 +293,182 @@ document.getElementById("clear-cache-btn").addEventListener("click", () => {
         location.reload();
     }
 });
+
+
+// ===================== WEAK TOPIC SUGGESTIONS =====================
+
+// Exact topic names and counts from neetcode_150_data.json
+const NEETCODE_TOPICS = {
+    "Array": 79,
+    "Hash Table": 29,
+    "Linked List": 11,
+    "Math": 13,
+    "Recursion": 7,
+    "String": 32,
+    "Sliding Window": 5,
+    "Binary Search": 13,
+    "Divide and Conquer": 9,
+    "Two Pointers": 16,
+    "Dynamic Programming": 35,
+    "Tree": 16,
+    "Depth-First Search": 31,
+    "Breadth-First Search": 26,
+    "Binary Tree": 16,
+    "Greedy": 11,
+    "Matrix": 15,
+    "Sorting": 17,
+    "Backtracking": 12,
+    "Stack": 9,
+    "Heap (Priority Queue)": 15,
+    "Merge Sort": 1,
+    "Monotonic Stack": 4,
+    "Simulation": 2,
+    "String Matching": 1,
+    "Hash Function": 1,
+    "Combinatorics": 1,
+    "Memoization": 3,
+    "Bit Manipulation": 9,
+    "Design": 11,
+    "Counting": 3,
+    "Binary Search Tree": 4,
+    "Union Find": 9,
+    "Graph": 12,
+    "Trie": 4,
+    "Doubly-Linked List": 1,
+    "Minimum Spanning Tree": 1,
+    "Topological Sort": 4,
+    "Quickselect": 3,
+    "Shortest Path": 2,
+    "Prefix Sum": 2,
+    "Queue": 1,
+    "Monotonic Queue": 1,
+    "Data Stream": 2,
+    "Eulerian Circuit": 1,
+    "Bucket Sort": 1,
+    "Line Sweep": 1,
+    "Geometry": 1
+};
+
+// topics.total from neetcode_150_data.json
+const NEETCODE_TOTAL = 503;
+
+async function loadWeakTopicSuggestions() {
+    const container = document.getElementById("suggestions-data");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const username = await getLoggedInUsername(tab.id);
+    if (!username) return;
+
+    try {
+        const res = await fetch("https://leetcode.com/graphql", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                query: `
+                    query getUserTopicStats($username: String!) {
+                        matchedUser(username: $username) {
+                            tagProblemCounts {
+                                advanced { tagName problemsSolved }
+                                intermediate { tagName problemsSolved }
+                                fundamental { tagName problemsSolved }
+                            }
+                        }
+                    }
+                `,
+                variables: { username },
+            }),
+        });
+
+        const data = await res.json();
+        const tags = data.data.matchedUser.tagProblemCounts;
+
+        // Build flat map: tagName -> problemsSolved (exact LeetCode tag names)
+        const userStats = {};
+        ["fundamental", "intermediate", "advanced"].forEach((level) => {
+            if (!tags[level]) return;
+            tags[level].forEach((t) => {
+                userStats[t.tagName] = (userStats[t.tagName] || 0) + t.problemsSolved;
+            });
+        });
+
+        // User total = sum of ALL user solved counts across every tag LeetCode returns
+        const userTotal = Object.values(userStats).reduce((a, b) => a + b, 0) || 1;
+
+        // Only show suggestions if user has solved at least 150 unique problems.
+        // Use acSubmissionNum (difficulty stats) for the accurate unique problem count
+        // since tag counts inflate the total (one problem can have multiple tags).
+        const diffRes = await fetch("https://leetcode.com/graphql", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                query: `
+                    query getUserProfile($username: String!) {
+                        matchedUser(username: $username) {
+                            submitStats: submitStatsGlobal {
+                                acSubmissionNum { difficulty count }
+                            }
+                        }
+                    }
+                `,
+                variables: { username },
+            }),
+        });
+        const diffData = await diffRes.json();
+        const acStats = diffData.data.matchedUser.submitStats.acSubmissionNum;
+        const totalSolved = acStats
+            .filter((d) => d.difficulty !== "All")
+            .reduce((sum, d) => sum + d.count, 0);
+        if (totalSolved < 150) {
+            container.innerHTML = "";
+            return;
+        }
+
+        // Compare ratios as doubles with full precision:
+        //   userRatio  = userStats[topic] / userTotal      (your solved share)
+        //   neetRatio  = neetCount        / NEETCODE_TOTAL (NeetCode 150 share)
+        // Only consider topics present in both datasets (exact tag name match)
+        const weakTopics = [];
+        for (const [topic, neetCount] of Object.entries(NEETCODE_TOPICS)) {
+            if (!(topic in userStats)) continue;
+
+            const neetRatio  = parseFloat(neetCount)            / parseFloat(NEETCODE_TOTAL);
+            const userRatio  = parseFloat(userStats[topic])     / parseFloat(userTotal);
+
+            if (userRatio < neetRatio) {
+                weakTopics.push({ topic, gap: neetRatio - userRatio });
+            }
+        }
+
+        // Sort by biggest gap first
+        weakTopics.sort((a, b) => b.gap - a.gap);
+
+        if (weakTopics.length === 0) {
+            container.innerHTML = `
+                <div class="suggestions-card">
+                    <h3 class="suggestions-title">🎯 Focus Suggestions</h3>
+                    <p class="suggestions-all-good">✅ Well-balanced across all NeetCode 150 topics!</p>
+                </div>`;
+            return;
+        }
+
+        const tagList = weakTopics
+            .map(({ topic }) => `<span class="suggestion-tag">${topic}</span>`)
+            .join("");
+
+        container.innerHTML = `
+            <div class="suggestions-card">
+                <h3 class="suggestions-title">🎯 Focus Suggestions</h3>
+                <div class="suggestion-tags">${tagList}</div>
+            </div>`;
+
+    } catch (err) {
+        console.error("Failed to load suggestions:", err);
+        container.innerHTML = "";
+    }
+}
 
 
 async function loadDifficultyChart() {
@@ -754,4 +931,3 @@ document.addEventListener("DOMContentLoaded", async () => {
         await loadFocusAreaDashboard();
     }
 });
-
