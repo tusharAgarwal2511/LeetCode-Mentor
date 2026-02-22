@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "LeetCode Mentor",
     "version": "3.0",
-    "description": "Notes, AI insights, and personalized dashboard for LeetCode problems.",
+    "description": "AI-powered LeetCode companion: pseudocode hints, smart insights, personal notes & progress dashboard. Ace your coding interviews.",
     "permissions": ["activeTab", "scripting", "storage", "tabs"],
     "host_permissions": [
         "https://leetcode.com/*",
