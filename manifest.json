@@ -1,9 +1,14 @@
 {
-    "manifest_version": 3,
+    "manifest_version": 3.1,
     "name": "LeetCode Mentor",
     "version": "3.0",
     "description": "AI-powered LeetCode companion: pseudocode hints, smart insights, personal notes & progress dashboard. Ace your coding interviews.",
-    "permissions": ["activeTab", "scripting", "storage", "tabs"],
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "storage",
+        "tabs"
+    ],
     "host_permissions": [
         "https://leetcode.com/*",
         "https://leetcode.com/graphql"
@@ -25,8 +30,12 @@
     },
     "content_scripts": [
         {
-            "matches": ["https://leetcode.com/problems/*"],
-            "js": ["inject.js"]
+            "matches": [
+                "https://leetcode.com/problems/*"
+            ],
+            "js": [
+                "inject.js"
+            ]
         }
     ]
 }
