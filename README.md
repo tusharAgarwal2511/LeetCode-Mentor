@@ -103,12 +103,12 @@ flowchart LR
 
 ## 📸 Screenshots
 
-| Screenshot | Preview |
-|---|---|
-| LSM1 | ![LSM1](images/LMSC1.png) |
-| LSM2 | ![LSM2](images/LMSC2.png) |
-| LSM3 | ![LSM3](images/LMSC3.png) |
-| LSM4 | ![LSM4](images/LMSC4.png) |
+| Preview |
+|---|
+| ![LSM1](images/LMSC1.png) |
+| ![LSM2](images/LMSC2.png) |
+| ![LSM3](images/LMSC3.png) |
+| ![LSM4](images/LMSC4.png) |
 
 ---
 
