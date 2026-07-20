@@ -1,191 +1,145 @@
-# LeetCode Mentor Chrome Extension
+# LeetCode Mentor
 
-A smart, AI-enhanced Chrome extension that helps you solve, track, and master LeetCode problems — with personalized notes, helpful links, a stopwatch, and Gemini-powered insights
+A polished Chrome extension that turns LeetCode into a guided interview-preparation workspace. It combines persistent problem notes, AI-generated insights, and a personal progress dashboard so developers can move from problem statement to solution with clarity and context. The project also includes a dedicated backend at [LeetCode Mentor Backend](https://github.com/tusharAgarwal2511/LeetCode-Mentor-Backend) for AI-powered responses.
+
+## 🌐 Published on the Chrome Web Store
+
+[View on Chrome Web Store](https://chromewebstore.google.com/detail/leetcode-mentor/naodegdjgghbeppfefdjfpnpjindgfje)
 
 ---
 
 ![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)
-![Express](https://img.shields.io/badge/Express-000000?logo=express&logoColor=white)
-![Google Gemini API](https://img.shields.io/badge/Google%20Gemini-GenerativeAI-blue?logo=google&logoColor=white)
-![Render](https://img.shields.io/badge/Render-303030?logo=render&logoColor=white)
+![Chrome Extension](https://img.shields.io/badge/Chrome%20Extension-4285F4?logo=googlechrome&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
+![Gemini](https://img.shields.io/badge/Gemini-AI-8E75FF?logo=google&logoColor=white)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/naodegdjgghbeppfefdjfpnpjindgfje?label=Chrome%20Extension&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/leetcode-mentor/naodegdjgghbeppfefdjfpnpjindgfje)
 
+---
+
+## 🌐 Overview
+
+LeetCode Mentor is designed for developers who want more than just a problem list. It brings structure to practice sessions by surfacing valuable context for each problem: personalized notes, AI-generated explanations, prerequisite guidance, and a dashboard that highlights performance patterns over time.
+
+The experience feels native to LeetCode while giving users a more intentional and productive workflow for interview prep.
 
 ---
 
-## 🌐 Published At
+## ✨ Feature Set
 
-Chrome Web Store → [view on Web Store](https://chromewebstore.google.com/detail/leetcode-mentor/naodegdjgghbeppfefdjfpnpjindgfje)
-
----
-
-
-## ✨ Features
-- 📝 Custom Notes: Add personal notes for each LeetCode problem directly on the problem page. 
-- 💾 Instant Save: Notes are automatically saved using chrome.storage.local and retrieved instantly.  
-- ⏱ Stopwatch / Timer: Track problem-solving time with a built-in stopwatch.  
-- 🔗 Helpful Links: Add problem-specific references or resources for quick access.
-- 🤖 AI-Powered Insights using [Gemini-ask-api](https://github.com/tusharAgarwal2511/Gemini-ask-api) to:
-  - Generate pseudocode for the problem.
-  - Explain concepts in simple terms.
-  - Suggest prerequisites before attempting the problem. 
-  - Highlight real-world applications.
-- 💡 Personalized Dashboard on Focus Area tab:
-  - Difficulty Stats: Visual breakdown of problems solved by difficulty.
-  - Contest Stats: Track contest performance, ratings, and percentile.
-  - Topic Stats: See problems solved per topic (Fundamental → Intermediate → Advanced) with progress bars and detailed lists.
-- 🔄 Smart Cache System: Minimizes redundant API calls by caching insights for 3 days.    
-- ✉️ Seamless UI: Fully integrated with LeetCode’s native look and feel.  
-- 🗑 Clear All Data: Easily reset all notes, insights, and timers with one click.
+- 📝 Problem-specific notes that are saved locally and available whenever you revisit a question
+- 🤖 AI-powered insights for pseudocode, concept explanations, prerequisites, and real-world use cases
+- 📊 A dashboard for difficulty trends, contest performance, and topic-wise progress
+- ⚡ Fast, lightweight interactions with local caching to reduce repeated API calls
+- 🧠 A clean, focused UI that blends into the LeetCode experience without feeling intrusive
+- 🗑 Easy reset controls for clearing saved notes and cached insight data
 
 ---
 
-## 💻 Tech Stack
+## 🤖 AI Features and Backend
 
-- [**JavaScript**](https://developer.mozilla.org/en-US/docs/Web/JavaScript) – Core frontend logic and Chrome extension behavior ✨  
-- [**HTML/CSS**](https://developer.mozilla.org/en-US/docs/Web/HTML) – Popup/user interface styling ⚙️  
-- [**Chrome Manifest V3**](https://developer.chrome.com/docs/extensions/mv3/) – Extension configuration & permissions 📄  
-- [**Gemini Ask API (Custom Backend)**](https://github.com/tusharAgarwal2511/Gemini-ask-api) – Your own Node.js/Express microservice that connects to Google’s Gemini 🤖  
-- [**Google Gemini API**](https://developers.generativeai.google/) – Generates AI-powered insights and explanations 🧠  
+The extension uses a dedicated backend service to power its AI-generated responses.
+
+- Backend repository: [LeetCode Mentor Backend](https://github.com/tusharAgarwal2511/LeetCode-Mentor-Backend)
+
+The backend supports:
+
+- 🧩 Pseudocode generation for the active problem
+- 🧠 Beginner-friendly explanations of the key concept
+- ✅ Prerequisite suggestions before solving
+- 🌍 Real-world applications and intuition behind the pattern
 
 ---
 
-## 📸 Screenshots  
+## 🧰 Tech Stack
 
-| | |
-|---|---|
-| ![Screenshot 01](images/Screenshot1.png) | ![Screenshot 02](images/Screenshot2.png) |
-| ![Screenshot 03](images/Screenshot3.png) | ![Screenshot 04](images/Screenshot4.png) |
-| ![Screenshot 05](images/Screenshot5.png) | |
+- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) – extension logic and UI behavior
+- [HTML/CSS](https://developer.mozilla.org/en-US/docs/Web/HTML) – popup structure and styling
+- [Chrome Manifest V3](https://developer.chrome.com/docs/extensions/mv3/) – extension configuration and permissions
+- [Chrome Storage API](https://developer.chrome.com/docs/extensions/reference/storage/) – local persistence for notes and cached data
+- [LeetCode GraphQL endpoints](https://leetcode.com/graphql) – dashboard statistics and user progress data
+- [Gemini-powered backend](https://github.com/tusharAgarwal2511/LeetCode-Mentor-Backend) – AI insights and explanation generation
 
 ---
 
 ## 🧩 System Architecture
-High-level overview of how the Chrome extension communicates with backend services.
-
-### 1. Flowchart (High-Level Process)
-Illustrates the decision-based flow from popup load to rendering, highlighting caching and data fetching logic. Demonstrates performance optimization by caching AI insights for 3 days, reducing API calls.
-
-```mermaid
-graph TD
-    A[LeetCode Page Load] --> B{Is Problem Page?}
-    B -->|Yes| C[Load Notes & AI Insights]
-    B -->|No| D{Is LeetCode Site?}
-    D -->|Yes| E[Load Dashboard Data]
-    D -->|No| F[Show Unavailable Sections]
-    C --> G[Fetch Cached Insights]
-    G --> H{Cache Valid?}
-    H -->|Yes| I[Display Insights]
-    H -->|No| J[Fetch from Gemini API]
-    J --> K[Generate Pseudocode, Teaches, Prerequisites, Use Case]
-    K --> L[Cache & Display]
-    L --> I
-    E --> M[Get Username via Script Injection]
-    M --> N[GraphQL Query: Difficulty Stats]
-    N --> O[Render Difficulty Bar Chart]
-    M --> P[GraphQL Query: Contest Ranking]
-    P --> Q[Render Contest Stats Card]
-    M --> R[GraphQL Query: Topic Problem Counts]
-    R --> S[Sort Topics by Solved]
-    S --> T[Render Progress Bar, Labels, List for Each Level]
-    T --> U[Add Toggle Functionality]
-```
-
-### 2. Component and Data Flow Diagram
-Breaks down frontend components, backend interactions, and pipelines—emphasizing modularity and error handling.
 
 ```mermaid
 flowchart LR
-    subgraph "Frontend (Popup HTML/JS)"
-        UI[Tabs: Notes, AI Insights, Dashboard]
-        Notes[Notes Section: Textarea, Save, Clear]
-        Insights[Insights Cards: Pseudocode, Teaches, Prereqs, Use Case]
-        Dashboard[Dashboard: Difficulty Bar, Contest Card, Topic Cards]
-        TabSwitch[Event Listeners for Tab Switching]
-        LoadOnDemand[Load Data on Tab Activation]
+    subgraph Browser[Chrome Extension]
+        Popup[Popup UI]
+        Content[Content Script]
+        Storage[Chrome Storage]
     end
-    
-    subgraph "Backend Interactions"
-        Cache[LocalStorage for Insights Cache 3 days]
-        Storage[Chrome Storage for Notes]
-        API[Gemini API via Render Proxy]
+
+    subgraph LeetCode[LeetCode Platform]
+        Problem[Problem Page]
         GraphQL[LeetCode GraphQL API]
     end
-    
-    subgraph "Data Flow"
-        Username[Extract Username from DOM]
-        ProblemSlug[Extract from URL]
-        InsightsFlow[ProblemSlug -> Cache Check -> API if Miss -> Display]
-        NotesFlow[Load/Save Notes per Problem]
-        StatsFlow[Username -> GraphQL Queries -> Render Charts]
+
+    subgraph Backend[AI Backend]
+        API[LeetCode Mentor Backend]
     end
-    
-    UI --> TabSwitch
-    TabSwitch --> LoadOnDemand
-    LoadOnDemand --> InsightsFlow
-    LoadOnDemand --> NotesFlow
-    LoadOnDemand --> StatsFlow
-    InsightsFlow --> Cache
-    InsightsFlow --> API
-    StatsFlow --> Username
-    StatsFlow --> GraphQL
-    NotesFlow --> Storage
+
+    Problem --> Content
+    Content --> Popup
+    Popup --> Storage
+    Popup --> GraphQL
+    Popup --> API
 ```
 
-### 3. Sequence Diagram (User Interaction Flow)
-Highlights asynchronous interactions and error handling—demonstrating robust UX.
+---
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Popup
-    participant LeetCode
-    participant Cache
-    participant API
-    
-    User->>Popup: Open Extension Popup
-    Popup->>LeetCode: Check URL & Extract Slug/Username
-    alt Problem Page
-        Popup->>Cache: Check Insights Cache
-        alt Cache Hit
-            Cache-->>Popup: Return Data
-        else Cache Miss
-            Popup->>API: Fetch Insights (Pseudocode etc.)
-            API-->>Popup: AI Responses
-            Popup->>Cache: Store with Timestamp
-        end
-        Popup-->>User: Display Insights Cards
-        Popup->>Cache: Load/Save Notes
-    else LeetCode Site
-        Popup->>LeetCode: GraphQL Difficulty Query
-        LeetCode-->>Popup: Stats Data
-        Popup-->>User: Render Difficulty Bar
-        Popup->>LeetCode: GraphQL Contest Query
-        LeetCode-->>Popup: Ranking Data
-        Popup-->>User: Render Contest Card
-        Popup->>LeetCode: GraphQL Topics Query
-        LeetCode-->>Popup: Tag Counts
-        Popup-->>User: Render Topic Progress Bars
-    end
-```
+## 📁 Project Structure
+
+- manifest.json – extension metadata, permissions, and entry configuration
+- popup.html – popup layout and tabbed interface
+- script.js – core logic for notes, insights, dashboard loading, and data fetching
+- inject.js – LeetCode page integration logic
+- styles.css – extension styling
+- images/ – app icons and screenshots
+- neetcode_150_data.json – topic and practice data used by the dashboard
+
+---
+
+## 📸 Screenshots
+
+| Screenshot | Preview |
+|---|---|
+| LSM1 | ![LSM1](images/LMSC1.png) |
+| LSM2 | ![LSM2](images/LMSC2.png) |
+| LSM3 | ![LSM3](images/LMSC3.png) |
+| LSM4 | ![LSM4](images/LMSC4.png) |
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. Clone the repo
+### Prerequisites
+
+- Google Chrome
+- A working backend instance for the AI insights API
+
+### Installation
+
 ```bash
 git clone https://github.com/tusharAgarwal2511/LeetCode-Mentor.git
 cd LeetCode-Mentor
 ```
 
-### 2 . Load locally into Chrome
-• Go to chrome://extensions  
-• Enable Developer Mode  
-• Click “Load unpacked”  
-• Select this project folder
+### Load the extension locally
 
-# 3. (Optional) Ping backend API
-https://gemini-ask-api.onrender.com
+1. Open chrome://extensions
+2. Enable Developer Mode
+3. Click Load unpacked
+4. Select this project folder
+5. Open a LeetCode problem page and launch the extension popup
+
+> The AI-powered insight features rely on the backend repository linked above being available.
+
+---
+
+## 📝 Notes
+
+LeetCode Mentor is built to feel like a smart study companion rather than just a utility tool. It helps users build stronger problem-solving habits, retain concepts more effectively, and prepare for interviews with more confidence.
 
 
